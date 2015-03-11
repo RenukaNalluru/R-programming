@@ -1,0 +1,15 @@
+# regras do gitignore
+# http://git-scm.com/docs/gitignore
+
+# https://help.github.com/articles/ignoring-files/
+# https://github.com/github/gitignore/blob/master/R.gitignore
+# https://github.com/github/gitignore
+# exemplo de gitignore
+
+.RData
+.Rproj.user/
+.Rhistory
+.Rapp.history
+*.xls
+*.xlsx
+*.csv

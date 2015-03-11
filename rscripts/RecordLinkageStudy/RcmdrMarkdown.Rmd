@@ -1,0 +1,31 @@
+<!-- R Commander Markdown Template -->
+
+Test
+=======================
+
+### Christoffer
+
+### `r as.character(Sys.Date())`
+
+```{r echo=FALSE}
+# include this code chunk as-is to set options
+knitr::opts_chunk$set(echo=FALSE, comment=NA, prompt=TRUE, out.width=750, fig.height=8, fig.width=8)
+library(Rcmdr)
+library(car)
+library(RcmdrMisc)
+```
+
+
+```{r}
+vecvtor <- c(2,3)
+```
+
+```{r}
+vetor <- c(2,3)
+```
+
+```{r}
+vetor
+```
+
+

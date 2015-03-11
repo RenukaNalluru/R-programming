@@ -1,0 +1,10 @@
+^r[.]+\s|^rua[-!"#$%&'()*+,./:;<=>?@[\\\]_`{|}~]
+
+corresponde com
+RUA: CASTRA ALVES
+R. CASTRA ALVES
+
+uso do "ou" expressao regular
+http://stackoverflow.com/questions/3378773/can-i-use-an-or-in-regex-without-capturing-whats-enclosed
+uso do "e""
+http://stackoverflow.com/questions/469913/regular-expressions-is-there-an-and-operator
