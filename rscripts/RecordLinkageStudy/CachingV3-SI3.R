@@ -4,10 +4,11 @@ library(ff)
 library(RJDBC)
 library(SOAR)
 
+setwd(dir = "C:/Users/christoffer/Desktop/R-programming/")
 drive <- JDBC(driverClass = "oracle.jdbc.OracleDriver", classPath = paste(getwd(), "/ojdbc6.jar", sep = ""), identifier.quote = " ")
-con <- RJDBC::dbConnect(drv = drive, "jdbc:oracle:thin:@localhost:1521/xe", "hr", "admin")
+conn <- RJDBC::dbConnect(drv = drive, "jdbc:oracle:thin:@localhost:1521/xe", "hr", "admin")
 
-unix.time(si3.fonetic <- RJDBC::dbGetQuery(con, "SELECT * FROM SI3_FONETIC where rownum <2000"))
+unix.time(si3.fonetic <- RJDBC::dbGetQuery(conn, "SELECT * FROM SI3_FONETIC where rownum <2000"))
 # usuario   sistema decorrido 
 # 5.91      0.29      6.19
 
@@ -17,7 +18,13 @@ library(R.cache)
 #(C:\Users\CHRIST~1\AppData\Local\Temp\RtmpAvHBJ6
 
 nrow(si3.fonetic) #1177129
-source(file = "UtilsRecordLinkage.R")
+
+
+f <- paste(getwd(), "/rscripts/RecordLinkageStudy/UtilsRecordLinkage.R", sep = "")
+t <- file.exists(f)
+ifelse(test = t, yes = source(file = f), no = q())
+
+
 
 sapply(1:ncol(si3.fonetic), function(i) nrow(si3.fonetic[is.na(si3.fonetic[, i]), ]))
 # 0  22145      0      0 183779
@@ -60,13 +67,9 @@ id.si3.notna <- c(1:nrow(si3.fonetic.notna)) #as.integer(row.names(x = si3.fonet
 
 cbind(si3.fonetic.notna[66:150, c(3)], si3.fonetic.notna[id.si3.notna[66:150], c(3)])
 
-
-interval <- 1:2000
-
-dedup.si3.fonetic <- RecordLinkage::compare.dedup(dataset = si3.fonetic.notna[interval, ], blockfld = list(1,2), strcmp = T, identity = id.si3.notna[interval])
+dedup.si3.fonetic <- RecordLinkage::compare.dedup(dataset = si3.fonetic.notna, blockfld = list(1,2), strcmp = T, identity = id.si3.notna)
 
 dedup.si3.fonetic <- RecordLinkage::compare.dedup(dataset = si3.fonetic.notna[1:5000, ], blockfld = list(1,2,3,4,5), strcmp = T, identity = id.si3.notna[1:5000])
-
 
 # par si3 fonetizado
 psi3.fon <- dedup.si3.fonetic$pairs
