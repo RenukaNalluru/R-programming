@@ -4,7 +4,7 @@ file <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
 ?download.file
 download.file(url = file, destfile = paste(getwd(),"/data-clear-coursera/quiz.csv", sep = ""), method = "auto")
 
-table <- read.table(file = paste(getwd(),"/data-clear-coursera/quiz.csv", sep = ""),header = T, sep = ",")
+table <- read.table(file = getdata%2Fdata%2Fss06pid.csv,header = T, sep = ",")
 head(table)
 ncol(table) # 188
 nrow(table) # 6496
@@ -61,8 +61,16 @@ xmlValue(x = child[["zipcode"]])[1]
 
 sum( XML::xmlApply(X = root[["row"]], FUN = function(child) xmlValue(x = child[["zipcode"]])[1]) == "21231")
 
-
 # fim questao 4
 
 
 # questao 5
+
+file <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv"
+download.file(url = file, destfile = paste(getwd(), "/data-clear-coursera/getdata_data_ss06pid.csv", sep = ""), method = "auto")
+table <- read.table(file = "data-clear-coursera/getdata_data_ss06pid.csv", header = T, sep = ",")
+
+library(data.table)
+table <- fread("data-clear-coursera/getdata_data_ss06pid.csv", header = T, sep = ",")
+
+unix.time(mean(table$pwgtp15))
