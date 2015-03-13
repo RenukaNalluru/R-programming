@@ -4,7 +4,7 @@ file <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
 ?download.file
 download.file(url = file, destfile = paste(getwd(),"/data-clear-coursera/quiz.csv", sep = ""), method = "auto")
 
-table <- read.table(file = getdata%2Fdata%2Fss06pid.csv,header = T, sep = ",")
+table <- read.table(file = "data-clear-coursera/quiz.csv", header = T, sep = ",")
 head(table)
 ncol(table) # 188
 nrow(table) # 6496
@@ -19,7 +19,7 @@ length(which(table[, c("VAL") ] == 24))
 
 sum(table[, c("VAL") ] == 24, na.rm = T)
 
-table[, c("VAL", "FES")]
+table[, c("FES")]
 
 
 #question 3
@@ -71,6 +71,13 @@ download.file(url = file, destfile = paste(getwd(), "/data-clear-coursera/getdat
 table <- read.table(file = "data-clear-coursera/getdata_data_ss06pid.csv", header = T, sep = ",")
 
 library(data.table)
-table <- fread("data-clear-coursera/getdata_data_ss06pid.csv", header = T, sep = ",")
+DT <- fread("data-clear-coursera/getdata_data_ss06pid.csv", header = T, sep = ",")
 
-unix.time(mean(table$pwgtp15))
+
+system.time(DT[,mean(pwgtp15),by=SEX])
+system.time(sapply(split(DT$pwgtp15,DT$SEX),mean))
+system.time(tapply(DT$pwgtp15,DT$SEX,mean))
+
+system.time(mean(DT$pwgtp15,by=DT$SEX))
+system.time(mean(DT[DT$SEX==1,]$pwgtp15))
+system.time(mean(DT[DT$SEX==2,]$pwgtp15))

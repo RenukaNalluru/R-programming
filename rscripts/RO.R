@@ -33,3 +33,10 @@ OREbase::ore.drop(table = "ANY_TABLE")
 ?Oracle   # package ROracle
 ?dbDriver # package DBI
 dbDriver("Oracle")
+
+
+
+# teste com rJava
+
+.jinit()
+vect <- .jnew("java/util/Vector")
