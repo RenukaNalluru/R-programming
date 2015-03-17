@@ -196,6 +196,8 @@ unix.time(table <- RecordLinkage::getTable(rs))
 class(table)
 ?RecordLinkage::getPairs
 
+summary(RecordLinkage::getTable(object = rs))
+
 ## S4 method for signature 'RLResult'
 unix.time(pairs <- RecordLinkage::getPairs(object = rs, max.weight = 0.8, filter.link="link"))
 # usuário   sistema decorrido 
@@ -268,6 +270,14 @@ RecordLinkage::getFalsePos(object = rs)
 
 ################### fim Teste 3
 
+################### Teste 4
+unix.time(rs <- RecordLinkage::epiClassify(rpairs = ans, threshold.upper =  0.8))
+unix.time(pairs <- RecordLinkage::getPairs(object = rs, min.weight = 0.7, max.weight = 0.8, filter.match = c("match", "unknown", "nonmatch"), filter.link = c("nonlink", "possible", "link")))
+# usuario   sistema decorrido 
+# 0.22      0.01      0.25
+# nrow(pairs) #2091
+
+################### fim Teste 4
 
 
 
