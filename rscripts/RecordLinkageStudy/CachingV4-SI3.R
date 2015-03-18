@@ -1,15 +1,19 @@
-library(ipred)
-library(RecordLinkage)
-library(RSQLite)
-library(ff)
-library(RJDBC)
-library(SOAR)
-
 setwd(dir = "C:/Users/christoffer/Desktop/R-programming/")
-drive <- JDBC(driverClass = "oracle.jdbc.OracleDriver", classPath = paste(getwd(), "/ojdbc6.jar", sep = ""), identifier.quote = " ")
-conn <- RJDBC::dbConnect(drv = drive, "jdbc:oracle:thin:@localhost:1521/xe", "hr", "admin")
-sql <- "SELECT * FROM SI3_FONETIC"
-unix.time(si3.fonetic <- RJDBC::dbGetQuery(conn, sql))
+
+# carregando funcoes de inicializacao, como load libraries e string de conexao
+f <- paste(getwd(), "/rscripts/RecordLinkageStudy/UtilsInitialize.R", sep = "")
+t <- file.exists(f)
+ifelse(test = t, yes = source(file = f), no = q())
+#definindo workdirectory
+def.workdirectory(str = "C:/Users/christoffer/Desktop/R-programming/")
+# pegando o drive de conexao
+drive <- construct.JDBCConnection(driveClass = "oracle.jdbc.OracleDriver", classPath =  paste(getwd(), "/ojdbc6.jar", sep = ""))
+# abrindo uma conexao
+conn <- def.connection.oracle(drive, str = "jdbc:oracle:thin:@localhost:1521/xe", user = "hr", pwd = "admin")
+
+unix.time(si3.fonetic <- exec.query(conn,  "SELECT * FROM SI3_FONETIC"))
+# usuario   sistema decorrido 
+#  8.17      0.19      5.79
 
 # carregando um arquivo que contem metodos de utilidades
 f <- paste(getwd(), "/rscripts/RecordLinkageStudy/UtilsRecordLinkage.R", sep = "")
@@ -30,11 +34,11 @@ row.names(x = si3.fonetic.notna) <- 1:nrow(si3.fonetic.notna)
 # vetor de ids
 id.si3.notna <- c(1:nrow(si3.fonetic.notna))
 
-?RecordLinkage::RLBigDataDedup
+# ?RecordLinkage::RLBigDataDedup
 
 # cbind(si3.fonetic.notna[1:100, c(1,2,3)], si3.fonetic.notna[id.si3.notna[1:100], c(1,2,3)])
 
-limit <- 1:10000
+limit <- 1:15000
 unix.time(data <- RecordLinkage::RLBigDataDedup(
     dataset = si3.fonetic.notna[limit, c(1,2,3)], 
     #identity = id.si3.notna[limit],
@@ -47,28 +51,42 @@ unix.time(data <- RecordLinkage::RLBigDataDedup(
 #10000
 # usuario   sistema decorrido 
 # 99.22      3.58    107.83 
+# 15000
+# usuario   sistema decorrido 
+# 244.80      9.09    258.32
 
 unix.time(expr = weight <- RecordLinkage::epiWeights(rpairs = data, e = 0.1, f = RecordLinkage::getFrequencies(x = data), withProgressBar = T))
-#1000
+# 10000
 # usuario   sistema decorrido 
 # 37.81      1.28     39.19 
+# 15000
+# usuario   sistema decorrido 
+# 92.96      3.19     97.09
 
 unix.time(expr = classify <- RecordLinkage::epiClassify(rpairs = weight, threshold.upper = 0.8))
-#1000
+# 1000
 # usuario   sistema decorrido 
 # 0.13      0.08      0.22 
 
-RecordLinkage::getTable(object = classify)
-summary(RecordLinkage::getTable(object = classify))
-?RecordLinkage::getPairs
+# funcao generica usada para produzir um resumo sobre modelos de dados
+# The method invokes particular methods which depend on the object pass by argument
+# ?summary
+
+# RecordLinkage::getTable(object = classify)
+# summary(RecordLinkage::getTable(object = classify))
+# summary(classify)
+# ?RecordLinkage::getPairs
 unix.time(expr = psi3 <- RecordLinkage::getPairs(object = classify, filter.link = "link"))
+# usuario   sistema decorrido 
+# 5.77      1.14     17.49
 
 # psi3
 # nrow(psi3)
 # psi3[1:100, ]
 # removendo as linhas brancas do data.frame psi3
-psi3.not.empty <- psi3[!psi3 == "", ]
-psi3.not.empty[1:100, ]
+
+unix.time(psi3.not.empty <- psi3[!psi3 == "", ])
+nrow(psi3.not.empty)
 
 # separando de 2 em dois os pares que a biblioteca gerou,
 # como a funcao lapply insere valores nulos na lista, uso a funcao Filter
@@ -76,13 +94,17 @@ psi3.not.empty[1:100, ]
 rs <- Filter(f = Negate(f = is.null), x =
     lapply(1:nrow(x = psi3.not.empty), function(i, mod){
         if(i %% mod == 0)
-            psi3.not.empty[(i-1):i, ]
+#             psi3.not.empty[(i-1):i, ]
+            cbind(psi3.not.empty[(i-1), c(1:4, 7)], psi3.not.empty[i, c(1:4, 7)])
     }, mod = 2)
 )
 
+as.data.frame(rs)
+
+
 lapply(rs[1:100], FUN = function(data){
     data <- as.data.frame(data)
-    ifelse(test = data$Weight == 1, yes = data, no = next)
+    #ifelse(test = data$Weight == 1, yes = data, no = next)
 })
 
 nrow(RecordLinkage::getFalse(object = classify))
