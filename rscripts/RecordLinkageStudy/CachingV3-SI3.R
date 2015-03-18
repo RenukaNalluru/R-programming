@@ -7,7 +7,7 @@ library(SOAR)
 
 setwd(dir = "C:/Users/christoffer/Desktop/R-programming/")
 drive <- JDBC(driverClass = "oracle.jdbc.OracleDriver", classPath = paste(getwd(), "/ojdbc6.jar", sep = ""), identifier.quote = " ")
-conn <- RJDBC::dbConnect(drv = drive, "jdbc:oracle:thin:@localhost:1521/xe", "hr", "admin")
+conn <- RJDBC::dbConnect(drv = drive, "jdbc:oracle:thin:@localhost:1521/xe", "hr", "12345")
 # sql <- "SELECT * FROM SI3_FONETIC where rownum < 2000"
 sql <- "SELECT * FROM SI3_FONETIC"
 unix.time(si3.fonetic <- RJDBC::dbGetQuery(conn, sql))
