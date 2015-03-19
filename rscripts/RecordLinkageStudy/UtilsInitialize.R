@@ -5,8 +5,6 @@ library(ff)
 library(RJDBC)
 library(SOAR)
 
-
-
 construct.JDBCConnection <- function(driveClass = NULL, classPath = NULL, idq = " ") {
     drive <- JDBC(driverClass = driveClass, classPath = classPath, identifier.quote = idq)
     drive
