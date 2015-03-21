@@ -22,7 +22,7 @@ ifelse(test = t, yes = source(file = f), no = q())
 
 # remover as linhas cuja o campo 1 consta o valor NA
 unix.time(si3.fonetic.notna <- listNotNa(X = si3.fonetic, fields = 1))
-
+si3.fonetic.notna[1, ]
 # a partir da remocao das linhas cujo campo 1 tinha valor NA, limpe
 # remova as demais linhas, agora olhando para os campos de 2 a 5
 unix.time(si3.fonetic.notna <- clear.all.matrix(data = si3.fonetic.notna, fields = 2:ncol(si3.fonetic.notna)))
@@ -38,7 +38,7 @@ id.si3.notna <- c(1:nrow(si3.fonetic.notna))
 
 # cbind(si3.fonetic.notna[1:100, c(1,2,3)], si3.fonetic.notna[id.si3.notna[1:100], c(1,2,3)])
 
-limit <- 1:15000
+limit <- 1:30000
 unix.time(data <- RecordLinkage::RLBigDataDedup(
     dataset = si3.fonetic.notna[limit, c(1,2,3)], 
     #identity = id.si3.notna[limit],
@@ -54,6 +54,12 @@ unix.time(data <- RecordLinkage::RLBigDataDedup(
 # 15000
 # usuario   sistema decorrido 
 # 244.80      9.09    258.32
+# 15000
+# usuario   sistema decorrido 
+# 244.80      9.09    258.32
+# 30000
+# usuario   sistema decorrido 
+# 1059.14     37.59   4381.97; 992.45 37.37   1097.19 
 
 unix.time(expr = weight <- RecordLinkage::epiWeights(rpairs = data, e = 0.1, f = RecordLinkage::getFrequencies(x = data), withProgressBar = T))
 # 10000
@@ -62,11 +68,17 @@ unix.time(expr = weight <- RecordLinkage::epiWeights(rpairs = data, e = 0.1, f =
 # 15000
 # usuario   sistema decorrido 
 # 92.96      3.19     97.09
+# 30000
+# usuario   sistema decorrido
+# 396.46     31.46    866.69
 
 unix.time(expr = classify <- RecordLinkage::epiClassify(rpairs = weight, threshold.upper = 0.8))
 # 1000
 # usuario   sistema decorrido 
 # 0.13      0.08      0.22 
+# 30000
+# usuario   sistema decorrido
+# 0.92      0.61      1.80
 
 # funcao generica usada para produzir um resumo sobre modelos de dados
 # The method invokes particular methods which depend on the object pass by argument
@@ -77,8 +89,12 @@ unix.time(expr = classify <- RecordLinkage::epiClassify(rpairs = weight, thresho
 # summary(classify)
 # ?RecordLinkage::getPairs
 unix.time(expr = psi3 <- RecordLinkage::getPairs(object = classify, filter.link = "link"))
+# 15000
 # usuario   sistema decorrido 
 # 5.77      1.14     17.49
+# 30000
+# usuario   sistema decorrido  
+# 24.38     15.85    231.11 
 
 # psi3
 # nrow(psi3)
@@ -86,6 +102,9 @@ unix.time(expr = psi3 <- RecordLinkage::getPairs(object = classify, filter.link 
 # removendo as linhas brancas do data.frame psi3
 
 unix.time(psi3.not.empty <- psi3[!psi3 == "", ])
+
+write.table(x = psi3.not.empty, file = paste(getwd(), "/rscripts/RecordLinkageStudy/pares_si3.csv", sep = ""), sep = ",")
+
 nrow(psi3.not.empty)
 
 # separando de 2 em dois os pares que a biblioteca gerou,
@@ -98,6 +117,8 @@ rs <- Filter(f = Negate(f = is.null), x =
             cbind(psi3.not.empty[(i-1), c(1:4, 7)], psi3.not.empty[i, c(1:4, 7)])
     }, mod = 2)
 )
+
+write.table(x = rs, file = paste(getwd(), "/rscripts/RecordLinkageStudy/pares_si3.csv", sep = ""), sep = ",")
 
 as.data.frame(rs)
 

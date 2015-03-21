@@ -55,10 +55,10 @@ clear.all.matrix <- function(data, fields = NULL) {
     if(is.null(fields)) {
         fields = 1:ncol(data)
     }
-    for(i in fields) {
+    unix.time(for(i in fields) {
         print(nrow(data))
         data <- listNotNa(X = data, fields = i)
-    }
+    })
     data
 }
 
